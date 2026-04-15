@@ -1,0 +1,9 @@
+{
+  "name": "figmacss",
+  "version": "1.0.0",
+  "description": "Figma design tokens to CSS",
+  "type": "module",
+  "scripts": {
+    "build-tokens": "style-dictionary build --config style-dictionary.config.js"
+  }
+}

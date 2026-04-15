@@ -1,0 +1,31 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --color-primary: #fd0c9c;
+  --color-secondary: #ff6584;
+  --color-neutral: #f4f4f8;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --font-thin: Inter Thin;
+  --font-regular: Inter Regular;
+  --font-medium: Inter Medium;
+  --font-semi-bold: Inter Semi Bold;
+  --font-bold: Inter Bold;
+  --gap-xs: 4;
+  --gap-sm: 8;
+  --gap-md: 16;
+  --gap-lg: 24;
+  --gap-xl: 32;
+  --radius-none: 0;
+  --radius-sm: 4;
+  --radius-md: 8;
+  --radius-lg: 16;
+  --radius-full: 999;
+  --typography-xs: 12;
+  --typography-sm: 14;
+  --typography-base: 16;
+  --typography-lg: 20;
+  --typography-xl: 24;
+}

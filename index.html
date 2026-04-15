@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Token Sync — Demo</title>
+
+  <!-- OPTION A: Load CURRENT local tokens (during local dev) -->
+  <link rel="stylesheet" href="tokens.css" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f0f13;
+      color: #e2e2f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-primary, #fd0c9c), var(--color-secondary, #ff6584));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #888;
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .token-card {
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+
+    .token-card:hover { border-color: #444; transform: translateY(-2px); }
+
+    .swatch {
+      width: 100%;
+      height: 60px;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      transition: background 0.5s ease;
+    }
+
+    .token-name { font-size: 0.7rem; color: #888; font-family: monospace; }
+    .token-value { font-size: 0.85rem; font-weight: 500; margin-top: 0.25rem; }
+
+    .spacing-demo {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .spacing-bar {
+      background: linear-gradient(135deg, var(--color-primary, #fd0c9c), var(--color-secondary, #ff6584));
+      border-radius: 4px;
+      opacity: 0.8;
+      transition: width 0.5s, height 0.5s;
+    }
+
+    .radius-demo {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .radius-box {
+      width: 48px;
+      height: 48px;
+      background: var(--color-primary, #fd0c9c);
+      opacity: 0.8;
+      transition: border-radius 0.5s;
+    }
+
+    #last-updated {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .section-title {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎨 Live Token Sync</h1>
+
+  <div class="status-bar">
+    <div class="dot"></div>
+    <span id="sync-status">Syncing from GitHub Pages…</span>
+    &nbsp;|&nbsp;
+    <span id="last-updated">Never updated</span>
+  </div>
+
+  <div class="token-grid" id="token-grid">
+
+    <!-- COLOR TOKENS -->
+    <div class="token-card">
+      <div class="section-title">Colors</div>
+      <div class="swatch" style="background: var(--color-primary)"></div>
+      <div class="token-name">--color-primary</div>
+      <div class="token-value" id="val-primary">loading…</div>
+    </div>
+    <div class="token-card">
+      <div class="swatch" style="background: var(--color-secondary)"></div>
+      <div class="token-name">--color-secondary</div>
+    </div>
+    <div class="token-card">
+      <div class="swatch" style="background: var(--color-success)"></div>
+      <div class="token-name">--color-success</div>
+    </div>
+    <div class="token-card">
+      <div class="swatch" style="background: var(--color-error)"></div>
+      <div class="token-name">--color-error</div>
+    </div>
+    <div class="token-card">
+      <div class="swatch" style="background: var(--color-neutral)"></div>
+      <div class="token-name">--color-neutral</div>
+    </div>
+
+    <!-- SPACING TOKENS -->
+    <div class="token-card">
+      <div class="section-title">Gap / Spacing</div>
+      <div class="spacing-demo">
+        <div class="spacing-bar" style="width:var(--gap-xs);height:var(--gap-xs)"></div>
+        <div class="spacing-bar" style="width:var(--gap-sm);height:var(--gap-sm)"></div>
+        <div class="spacing-bar" style="width:var(--gap-md);height:var(--gap-md)"></div>
+        <div class="spacing-bar" style="width:var(--gap-lg);height:var(--gap-lg)"></div>
+        <div class="spacing-bar" style="width:var(--gap-xl);height:var(--gap-xl)"></div>
+      </div>
+      <div class="token-name" style="margin-top:0.75rem">xs / sm / md / lg / xl</div>
+    </div>
+
+    <!-- BORDER RADIUS TOKENS -->
+    <div class="token-card">
+      <div class="section-title">Border Radius</div>
+      <div class="radius-demo">
+        <div class="radius-box" style="border-radius:var(--radius-none)"></div>
+        <div class="radius-box" style="border-radius:var(--radius-sm)"></div>
+        <div class="radius-box" style="border-radius:var(--radius-md)"></div>
+        <div class="radius-box" style="border-radius:var(--radius-lg)"></div>
+        <div class="radius-box" style="border-radius:var(--radius-full)"></div>
+      </div>
+      <div class="token-name" style="margin-top:0.75rem">none / sm / md / lg / full</div>
+    </div>
+
+  </div>
+
+  <p id="last-updated" style="font-size:0.7rem;color:#444">
+    Tokens loaded locally. CDN sync starts in background…
+  </p>
+
+  <!-- OPTION B: Switch to CDN sync — uncomment when GitHub Pages is live -->
+  <!--
+  <script type="module">
+    import { TokenSync } from './token-sync.js';
+
+    const sync = new TokenSync({
+      cdnUrl: 'https://kiran-glitch-gif.github.io/Tokenstudio/tokens.css',
+      metaUrl: 'https://kiran-glitch-gif.github.io/Tokenstudio/meta.json',
+      interval: 30000,
+      onUpdate: (meta) => {
+        document.getElementById('sync-status').textContent = `Updated (sha: ${meta.sha?.slice(0,7)})`;
+        document.getElementById('last-updated').textContent = `Last sync: ${new Date().toLocaleTimeString()}`;
+      },
+      onError: () => {
+        document.getElementById('sync-status').textContent = 'Sync error — retrying…';
+      }
+    });
+
+    sync.start();
+    document.getElementById('sync-status').textContent = 'Live sync active ✔';
+  </script>
+  -->
+
+</body>
+</html>
