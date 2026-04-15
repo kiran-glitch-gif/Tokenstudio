@@ -1,76 +1,51 @@
 import StyleDictionary from "style-dictionary";
 
-// ─── NAME TRANSFORM (clean + stable) ─────────────────────────────
-StyleDictionary.registerTransform({
-  name: "tokens/name-clean",
-  type: "name",
-  transform: (token) => {
-    return token.path
-      .filter((part) => !/default|collection|mode/i.test(part))
-      .filter((part) => !/^[\p{Emoji}]/u.test(part))
-      .join("-")
-      .replace(/\s+/g, "-")
-      .toLowerCase();
-  }
-});
-
-// ─── SIZE → PX (only numbers) ────────────────────────────────────
-StyleDictionary.registerTransform({
-  name: "tokens/size-px",
-  type: "value",
-  transitive: true,
-  filter: (token) => typeof token.value === "number",
-  transform: (token) => {
-    return token.value === 0 ? "0" : `${token.value}px`;
-  }
-});
-
-// ─── FONT QUOTING (safe) ────────────────────────────────────────
-StyleDictionary.registerTransform({
-  name: "font/quote",
-  type: "value",
-  transitive: true,
-  filter: (token) =>
-    token.path.some((p) => typeof p === "string" && p.includes("font")),
-  transform: (token) => `"${token.value}"`,
-});
-
-// ─── CLEAN CSS FORMAT ───────────────────────────────────────────
-StyleDictionary.registerFormat({
-  name: "css/variables-clean",
-  format: ({ dictionary }) => {
-    const lines = dictionary.allTokens.map(
-      (t) => `  --${t.name}: ${t.value};`
-    );
-
-    const uniqueLines = [...new Set(lines)];
-
-    return `/** Auto-generated - do not edit */\n\n:root {\n${uniqueLines.join(
-      "\n"
-    )}\n}\n`;
-  },
-});
-
-// ─── CONFIG ─────────────────────────────────────────────────────
 const sd = new StyleDictionary({
   source: ["tokens.json"],
+  hooks: {
+    transforms: {
+      // Custom name transform to handle emojis and nested paths
+      "custom/name/kebab": {
+        type: "name",
+        transform: (token) => {
+          return token.path
+            .filter(part => !/Default|^\p{Emoji}/u.test(part))
+            .join("-")
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[/]/g, "-");
+        }
+      },
+      // Universal px unit transform for all sizes and spaces
+      "custom/size/px": {
+        type: "value",
+        transitive: true,
+        filter: (token) => {
+          const val = token.value ?? token.$value;
+          const isSize = token.path.some(p => /gap|radius|typography|spacing|size/i.test(p));
+          const isNumber = typeof val === 'number' || (typeof val === 'string' && !isNaN(parseFloat(val)));
+          return isSize && isNumber;
+        },
+        transform: (token) => {
+          const val = parseFloat(token.value ?? token.$value);
+          if (val === 0) return "0";
+          return `${val}px`;
+        }
+      }
+    }
+  },
   platforms: {
     css: {
-      transforms: [
-        "tokens/name-clean",
-        "tokens/size-px",
-        "font/quote",
-        "color/css",
-      ],
+      transforms: ["custom/name/kebab", "custom/size/px", "color/css"],
       buildPath: "./",
       files: [
         {
           destination: "tokens.css",
-          format: "css/variables-clean",
-        },
-      ],
-    },
-  },
+          format: "css/variables"
+        }
+      ]
+    }
+  }
 });
 
 await sd.buildAllPlatforms();
