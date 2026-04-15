@@ -4,6 +4,6 @@
   "description": "Figma design tokens to CSS",
   "type": "module",
   "scripts": {
-    "build-tokens": "style-dictionary build --config style-dictionary.config.js"
+    "build-tokens": "node style-dictionary.config.js"
   }
 }
