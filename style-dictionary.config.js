@@ -48,7 +48,7 @@ StyleDictionary.registerTransform({
 // ─── Config ─────────────────────────────────────────────────────────────────
 
 const sd = new StyleDictionary({
-  source: ["tokens/**/*.json"],
+  source: ["tokens.json", "tokens/**/*.json"],
   platforms: {
     css: {
       transforms: ["name/clean-kebab", "size/px", "font/quote", "color/css"],
