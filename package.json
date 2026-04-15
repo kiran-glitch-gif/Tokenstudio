@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "build-tokens": "node style-dictionary.config.js"
+  },
+  "dependencies": {
+    "style-dictionary": "^4.0.0"
   }
 }
