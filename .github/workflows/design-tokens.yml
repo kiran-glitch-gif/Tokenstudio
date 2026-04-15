@@ -1,15 +1,22 @@
-name: Sync Design Tokens
+name: Design Token Sync & Deploy
 
 on:
   push:
     paths:
-      - 'tokens/**'
       - 'tokens.json'
+      - 'tokens/**'
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -17,6 +24,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -41,3 +50,20 @@ jobs:
             git commit -m "chore: update tokens.css [skip ci]"
             git push
           fi
+
+      - name: Prepare Pages artifacts
+        run: |
+          mkdir -p dist
+          cp tokens.css dist/tokens.css
+          cp tokens.json dist/tokens.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
