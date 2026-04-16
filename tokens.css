@@ -35,7 +35,6 @@
   --color-error: #ef4444;
   --primary-800: #c20a0a;
   --primary-900: #18e9d7;
-  --secondary-200: #630e10;
   --font-thin: Inter Thin;
   --font-regular: Inter Regular;
   --font-medium: Inter Medium;
@@ -56,4 +55,13 @@
   --typography-base: 16px;
   --typography-lg: 20px;
   --typography-xl: 24px;
+  --color-primary: #fd0c9c;
+  --color-secondary: #ff6584;
+  --color-neutral: #f4f4f8;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --primary-800: #c20a0a;
+  --primary-900: #18e9d7;
+  --secondary-200: #630e10;
+  --secondary-10: #593b3b;
 }
